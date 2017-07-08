@@ -1,189 +1,59 @@
-var stronglyTyped = require('../')
-var assert = require('assert')
+const stronglyTyped = require("../")
 
-var TypeA = stronglyTyped({
-    "a": "string",
-    "b": "number",
-    "c": []
-})
-
-var TypeB = stronglyTyped({
-    "a": "string",
-    "b": {
-        c: "number"
-    }
-}, {
-    somefield: "prototype field"
-})
-
-var TypeC = stronglyTyped({
-    "a": {},
-    "b": !"falsy indicates a field must exist, any type"
-})
-
-var Autoid1 = stronglyTyped({
-    "id": "number",
-    "text": "string"
+var Person = stronglyTyped({
+    "name": {
+        first: "string",
+        last: "string"
+    },
+    "age": "number",
+    "favorites": [],
+    "height": null,
+    "eyeglasses": "boolean"
 }, {
     constructor: function () {
-        this.id = 123;
-    }
-})
-
-function OriginalAutoid() {
-    this.id = 123;
-}
-var Autoid2 = stronglyTyped({
-    "id": "number",
-    "text": "string"
-}, OriginalAutoid.prototype)
-
-var InterfaceA = stronglyTyped({
-    "methodname": "function"
-})
-
-
-assert.doesNotThrow(function () {
-    var x = TypeA({
-        b: 123,
-        a: "foo",
-        c: []
-    })
-
-    var y = TypeB({
-        b: {
-            c: 123
+        this["species"] = "Homo sapiens"
+    },
+    validate: function () {
+        (function cureEyes(obj) {
+            if (obj.eyeglasses) {
+                obj.eyeglasses = false
+            }
+        })(this)
+    },
+    specify: {
+        name: {
+            first: {
+                regex: /^[a-z]+$/gi,
+                length: 10
+            },
+            last: {
+                regex: /^[a-z]+$/gi,
+                length: 15
+            }
         },
-        a: "foo"
-    })
+        age: {
+            range: ["0-150"],
+            lt: 120,
+            ge: 10
+        },
+        height: {
+            equal: ["tall", "short"],
+            types: ["number"]
+        }
+    }
+}, true)
 
-    var z = TypeC({
-        b: null,
-        a: null
-    })
-
-    var i = InterfaceA({
-        methodname: function () {}
-    })
-
-    var aa = Autoid1({
-        text: "foo"
-    })
-    var ab = Autoid2({
-        text: "foo"
-    })
-}, "expected object creation to succeed")
-
-
-var x = TypeB({
-    b: {
-        c: 123
+//create instance
+const joe = Person({
+    name: {
+        first: "Joe",
+        last: "Average"
     },
-    a: "foo"
+    age: 23,
+    favorites: ["beer", "game"],
+    height: 13,
+    eyeglasses: true,
+    eyeColor: "blue" //allowed by [allowUnspecifiedFields] parameter
 })
 
-var z = InterfaceA({
-    methodname: function () {}
-})
-
-var ab = Autoid2({
-    text: "foo"
-})
-
-assert.ok(x.somefield, "expected prototype to be passed")
-
-
-assert.ok(TypeB.created(x), "expected instanceof to work")
-assert.ok(!TypeB.created(z), "expected instanceof to work")
-
-assert.equal(JSON.stringify(x), '{"b":{"c":123},"a":"foo"}');
-assert.equal(JSON.stringify(ab), '{"text":"foo","id":123}');
-
-assert.doesNotThrow(function () {
-    var x = TypeA({
-        b: 123,
-        a: "foo",
-        c: [1, 2, 3]
-    })
-
-    var y = TypeA(x)
-
-    assert.equal(JSON.stringify(x), JSON.stringify(y));
-    assert.ok(TypeA.created(y), "expected .created to work for descendants")
-
-}, "expected object creation from another object")
-
-
-assert.throws(
-    function () {
-        var x = TypeA({
-            x: 123
-        })
-    },
-    / x$/,
-    "expected TypeError on incorrect object definition"
-);
-
-assert.throws(
-    function () {
-        var x = TypeA({
-            b: 123,
-            a: "foo",
-            c: {}
-        })
-    },
-    /c:notArray/,
-    "expected TypeError on not an array"
-);
-
-assert.throws(
-    function () {
-        var x = TypeA({
-            b: 123,
-            a: "foo",
-            c: []
-        })
-
-        var y = TypeB(x)
-    },
-    /Unexpected field c/,
-    "expected TypeError on object from object"
-);
-
-assert.throws(
-    function () {
-        var x = TypeB({
-            a: "foo",
-            b: {
-                x: 123
-            }
-        })
-    },
-    /b\.c:undefined/,
-    "expected TypeError on incorrect object definition"
-);
-
-assert.throws(
-    function () {
-        var x = TypeB({
-            a: "foo"
-        })
-    },
-    /b:missing/,
-    "expected TypeError on incorrect object definition2"
-);
-
-assert.throws(
-    function () {
-        var x = TypeB({
-            a: "foo",
-            b: {
-                c: "A"
-            }
-        })
-    },
-    /b\.c:string$/,
-    "expected TypeError on incorrect object definition3"
-);
-
-console.log('done');
+//console.log(JSON.stringify(joe))

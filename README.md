@@ -25,8 +25,8 @@ var TypeName = stronglyTyped(interface_definition, [prototype], [allowUnspecifie
     You can also use `null`, empty `{}` or `!"any expression here"` to indicate that the field must exist, without specifying anything else about it.
 
 1. `prototype` is a place for two functions:
-* preValidate - which is executed before validating types
-* postValdate - after validating types
+* constructor - which is executed before validating types
+* validate - after validating types
 
 1. `allowUnspecifiedFields` if true it allows for inserting other keys then in stronglyTyped definition
 
@@ -43,10 +43,14 @@ var Person = stronglyTyped({
     "height": null,
     "eyeglasses": "boolean"
 }, {
-    preValidate: function() {
+    constructor: function() {
         this["species"] = "Homo sapiens"
     },
-    postValidate: function() {
+    validate: function() {
+        if(typeof(this.height) !== "string" && typeof(this.height) !== "number"){
+            throw new TypeError("Person can be tall or short, or have exact value")
+        }
+        
         (function cureEyes(obj) {
             if(obj.eyeglasses){
                 obj.eyeglasses = false
