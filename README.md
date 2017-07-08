@@ -25,8 +25,8 @@ var TypeName = stronglyTyped(interface_definition, [prototype], [allowUnspecifie
     You can also use `null`, empty `{}` or `!"any expression here"` to indicate that the field must exist, without specifying anything else about it.
 
 1. `prototype` is a place for two functions:
-* preValidate - which is executed before validating types
-* postValdate - after validating types
+    * preValidate - which is executed before validating types
+    * postValdate - after validating types
 
 1. `allowUnspecifiedFields` if true it allows for inserting other keys then in stronglyTyped definition
 
