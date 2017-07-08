@@ -14,11 +14,21 @@ var TypeName = stronglyTyped(interface_definition, [prototype], [allowUnspecifie
 
 ```
 
-`interface_definition` is a plain object of the expected structure with fields containing strings to match `typeof` in the typed objects.
+1. `interface_definition` is a plain object of the expected structure with fields containing strings to match `typeof` in the typed objects.
 
-You can also use `null` or empty `{}` to indicate that the field must exist, without specifying anything else about it.
+    Allowed types:
+    * "string"
+    * "number"
+    * "boolean"
+    * [] - array type
+    
+    You can also use `null`, empty `{}` or `!"any expression here"` to indicate that the field must exist, without specifying anything else about it.
 
-You can also use `[]` to enforce field being an array (as `typeof` retrns `"object"` for arrays).
+1. `prototype` is a place for two functions:
+* preValidate - which is executed before validating types
+* postValdate - after validating types
+
+1. `allowUnspecifiedFields` if true it allows for inserting other keys then in stronglyTyped definition
 
 _Example_
 
@@ -29,17 +39,33 @@ var Person = stronglyTyped({
         last:"string"
     },
     "age": "number",
-    "favorites": []
-})
+    "favorites": [],
+    "height": null,
+    "eyeglasses": "boolean"
+}, {
+    preValidate: function() {
+        this["species"] = "Homo sapiens"
+    },
+    postValidate: function() {
+        (function cureEyes(obj) {
+            if(obj.eyeglasses){
+                obj.eyeglasses = false
+            }
+        })(this)
+    }
+}, true)
 
 //create instance
 var joe = Person({
-    "name": {
+    name: {
         first:"Joe",
         last:"Average"
     },
-    "age": 52,
-    "favorites": ["beer","game"]
+    age: 21.5,
+    favorites: ["beer","game"],
+    height: "tall",
+    eyeglasses: true,
+    eyeColor: "blue" //allowed by [allowUnspecifiedFields] parameter
 })
 
 //check type

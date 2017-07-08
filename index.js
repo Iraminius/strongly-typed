@@ -1,6 +1,3 @@
-"use strict";
-
-
 function validate(obj, desc, parent) {
     if (!desc) {
         return []
@@ -40,8 +37,8 @@ module.exports = function (desc, proto, allowExtras) {
                     if (errors.length > 0) {
                         throw new TypeError("Incorrect values for fields: " + errors.join());
                     }
-                    if (StronglyTyped.prototype.validate) {
-                        return StronglyTyped.prototype.validate.call(this);
+                    if (StronglyTyped.prototype.postValidate) {
+                        return StronglyTyped.prototype.postValidate.call(this);
                     }
                 }
             }
@@ -53,8 +50,8 @@ module.exports = function (desc, proto, allowExtras) {
                 throw new TypeError("Unexpected field " + key);
             }
         });
-        if (StronglyTyped.prototype.constructor && StronglyTyped.prototype.constructor.apply) {
-            StronglyTyped.prototype.constructor.apply(self, arguments)
+        if (StronglyTyped.prototype.preValidate && StronglyTyped.prototype.preValidate.apply) {
+            StronglyTyped.prototype.preValidate.apply(self, arguments)
         }
         self.validate();
         return self;
