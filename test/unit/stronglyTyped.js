@@ -2,7 +2,9 @@ const stronglyTyped = require("../../")
 const should = require("should")
 
 describe("Check types for strongly-typed", function () {
-    var values = [ "Joe", 13, true, [ "beer", "games" ], { key: "string"} ]
+
+    //var describedValues = [ "string", "number", "boolean", [], { key: "string" } ]
+    var values = [ "Joe", 13, true, [ "beer", "games" ], { key: "string"}]
 
     values.forEach( function(value) {
         var type = typeof(value)
@@ -49,5 +51,18 @@ describe("Check types for strongly-typed", function () {
                 })
             })
         })
+    })
+})
+
+describe("Check extra fields", function() {
+
+    it("Allow extra fields", function() {
+        var extraTyped = stronglyTyped({}, {}, true)
+
+        (() => {
+            extraTyped({
+                "extra": "test extra field"
+            })
+        }).should.not.throw(Error)
     })
 })
