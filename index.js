@@ -53,8 +53,9 @@ function validate(obj, desc, parent, specified) {
                         if (specified[key]["types"]) {
                             var typeErrors = 0
                             specified[key]["types"].forEach(function (type) {
-                                delete specified[key]["equal"]
-                                if(validate({[key]: obj[key]}, {[key]: type}, "", specified).length > 0){
+                                specifiedCopy = JSON.parse(JSON.stringify(specified))
+                                delete specifiedCopy[key]["equal"]
+                                if(validate({[key]: obj[key]}, {[key]: type}, "", specifiedCopy).length > 0){
                                     typeErrors++
                                 }
                             })
@@ -80,7 +81,11 @@ function validate(obj, desc, parent, specified) {
                 }
             } else {
                 if (obj.hasOwnProperty(key)) {
-                    errors = errors.concat(validate(obj[key], descriptionVal, parent + key + ".", specified[key]));
+                    if(specified && specified[key]){
+                        errors = errors.concat(validate(obj[key], descriptionVal, parent + key + ".", specified[key]))
+                    } else {
+                        errors = errors.concat(validate(obj[key], descriptionVal, parent + key + "."))
+                    }
                 } else {
                     errors.push(parent + key + ":missing");
                 }

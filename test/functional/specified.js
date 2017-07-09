@@ -44,20 +44,42 @@ var Person = stronglyTyped({
     }
 }, true)
 
+var person = {}
+
+function createPerson() {
+    Person(person)
+}
+
+function resetPerson() {
+    person = {
+        name: {
+            first: "Joe",
+            last: "Average"
+        },
+        age: 23,
+        favorites: ["beer", "game"],
+        height: 13,
+        eyeglasses: true,
+        eyeColor: "blue" //allowed by [allowUnspecifiedFields] parameter
+    }
+}
+
+resetPerson()
+
 describe("Strongly typed specifier", function() {
     it("Create object", function() {
-        const joe = Person({
-            name: {
-                first: "Joe",
-                last: "Average"
-            },
-            age: 23,
-            favorites: ["beer", "game"],
-            height: 13,
-            eyeglasses: true,
-            eyeColor: "blue" //allowed by [allowUnspecifiedFields] parameter
-        })
+        createPerson.should.not.throw(Error)
+    })
 
-        should(joe).ok()
+    it("Doesn't match regex", function() {
+        resetPerson()
+        person.name.first = "Joe9"
+        createPerson.should.throw(Error)
+    })
+
+    it("Doesn't match any specified type", function() {
+        resetPerson()
+        person.height = "test"
+        createPerson.should.throw(Error)
     })
 })
