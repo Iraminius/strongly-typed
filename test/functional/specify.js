@@ -1,4 +1,5 @@
-const stronglyTyped = require("../")
+const stronglyTyped = require("../../")
+const should = require("should")
 
 var Person = stronglyTyped({
     "name": {
@@ -43,17 +44,20 @@ var Person = stronglyTyped({
     }
 }, true)
 
-//create instance
-const joe = Person({
-    name: {
-        first: "Joe",
-        last: "Average"
-    },
-    age: 23,
-    favorites: ["beer", "game"],
-    height: 13,
-    eyeglasses: true,
-    eyeColor: "blue" //allowed by [allowUnspecifiedFields] parameter
-})
+describe("Strongly typed specifier", function() {
+    it("Create object", function() {
+        const joe = Person({
+            name: {
+                first: "Joe",
+                last: "Average"
+            },
+            age: 23,
+            favorites: ["beer", "game"],
+            height: 13,
+            eyeglasses: true,
+            eyeColor: "blue" //allowed by [allowUnspecifiedFields] parameter
+        })
 
-//console.log(JSON.stringify(joe))
+        should(joe).ok()
+    })
+})
