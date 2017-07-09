@@ -1,5 +1,6 @@
-strongly-typed
-==============
+# strongly-typed
+
+[![Build Status](https://travis-ci.org/Iraminius/strongly-typed.svg?branch=master)](https://travis-ci.org/Iraminius/strongly-typed)
 
 Strongly-typed JavaScript objects, self-validating, with detailed error reports.
 
