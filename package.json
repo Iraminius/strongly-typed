@@ -4,7 +4,9 @@
   "description": "Strongly typed javascript objects, self-validating, detailed error reports",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive test"
+    "test": "mocha --recursive test",
+    "test-unit": "mocha --recursive test/unit",
+    "test-functional": "mocha --recursive test/functional"
   },
   "repository": {
     "type": "git",
